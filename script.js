@@ -1,8 +1,7 @@
 async function loadCSV(path) {
   const res = await fetch(path);
-  if (!res.ok) throw new Error("Failed to load CSV: " + res.status);
-  const text = await res.text();
-  return text.trim();
+  if (!res.ok) throw new Error("Failed to load CSV: " + path + " (" + res.status + ")");
+  return (await res.text()).trim();
 }
 
 function parseCSV(csvText) {
@@ -17,67 +16,38 @@ function parseCSV(csvText) {
   return { headers, rows };
 }
 
-function renderTable(headers, rows) {
-  const container = document.getElementById("tableContainer");
-
-  const table = document.createElement("table");
-  const thead = document.createElement("thead");
-  const trh = document.createElement("tr");
-
-  headers.forEach(h => {
-    const th = document.createElement("th");
-    th.textContent = h;
-    trh.appendChild(th);
-  });
-  thead.appendChild(trh);
-  table.appendChild(thead);
-
-  const tbody = document.createElement("tbody");
-  rows.forEach(r => {
-    const tr = document.createElement("tr");
-    headers.forEach(h => {
-      const td = document.createElement("td");
-      td.textContent = r[h];
-      tr.appendChild(td);
-    });
-    tbody.appendChild(tr);
-  });
-
-  table.appendChild(tbody);
-  container.innerHTML = "";
-  container.appendChild(table);
-}
-
-function buildDatasets(headers, rows) {
-  // headers: decade, Jazz, Rock, Pop, ...
+function buildGenreDatasets(headers, rows) {
   const decadeKey = headers[0];
   const genres = headers.slice(1);
-
   const labels = rows.map(r => r[decadeKey]);
 
   const datasets = genres.map(g => ({
     label: g,
     data: rows.map(r => Number(r[g])),
-    borderWidth: 2,
-    tension: 0.25
+    borderWidth: 1.5,
+    fill: true,
+    stack: "genres",
+    tension: 0.3
   }));
 
   return { labels, datasets };
 }
 
+function buildTensionSeries(rows) {
+  const labels = rows.map(r => r.decade);
+  const data = rows.map(r => Number(r.tension_index));
+  return { labels, data };
+}
+
 async function main() {
-  const csvText = await loadCSV("data.csv");
-  const { headers, rows } = parseCSV(csvText);
+  // --- Chart 1: Genres (stacked area) ---
+  const genreCSV = await loadCSV("music_genres.csv");
+  const genreParsed = parseCSV(genreCSV);
+  const genreData = buildGenreDatasets(genreParsed.headers, genreParsed.rows);
 
-  renderTable(headers, rows);
-
-  const { labels, datasets } = buildDatasets(headers, rows);
-
-  const ctx = document.getElementById("genreChart");
-
-  new Chart(ctx, {
+  new Chart(document.getElementById("genreChart"), {
     type: "line",
-    data: { labels, datasets },
+    data: genreData,
     options: {
       responsive: true,
       plugins: {
@@ -85,19 +55,47 @@ async function main() {
       },
       scales: {
         y: {
-          title: { display: true, text: "Popularity (percentage)" },
-          beginAtZero: true
+          stacked: true,
+          beginAtZero: true,
+          title: { display: true, text: "Relative popularity (%)" }
         },
-        x: {
-          title: { display: true, text: "Decade" }
-        }
+        x: { title: { display: true, text: "Decade" } }
+      }
+    }
+  });
+
+  // --- Chart 2: Tension index ---
+  const contextCSV = await loadCSV("context_events.csv");
+  const contextParsed = parseCSV(contextCSV);
+  const contextRows = contextParsed.rows;
+
+  const tension = buildTensionSeries(contextRows);
+
+  new Chart(document.getElementById("tensionChart"), {
+    type: "bar",
+    data: {
+      labels: tension.labels,
+      datasets: [{
+        label: "Tension index (0–100)",
+        data: tension.data,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          title: { display: true, text: "Tension index" }
+        },
+        x: { title: { display: true, text: "Decade" } }
       }
     }
   });
 }
 
-main().catch(err => {
-  console.error(err);
-  const container = document.getElementById("tableContainer");
-  if (container) container.textContent = "Error loading dataset.";
-});
+main().catch(console.error);
