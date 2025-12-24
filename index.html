@@ -14,10 +14,31 @@
   </header>
 
   <main>
-    <section>
-      <canvas id="genreChart"></canvas>
-    </section>
-  </main>
+  <section class="card">
+    <h2>Visualization</h2>
+    <canvas id="genreChart"></canvas>
+    <p class="note">The chart is generated from the CSV dataset included in this repository.</p>
+  </section>
+
+  <section class="card">
+    <h2>Dataset (CSV preview)</h2>
+    <div id="tableContainer">Loading data…</div>
+  </section>
+
+  <section class="card">
+    <h2>Method</h2>
+    <p>
+      This project explores how the relative popularity of major music genres evolves across decades.
+      Values are expressed as percentages per decade. The dataset is stored as a CSV file and loaded
+      dynamically in the browser.
+    </p>
+    <p>
+      Next step: replace the sample dataset with a documented source (e.g., charts archives or curated references)
+      and justify the construction of the percentages.
+    </p>
+  </section>
+</main>
+
 
   <script src="script.js"></script>
 </body>
