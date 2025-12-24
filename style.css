@@ -19,3 +19,37 @@ main {
   padding: 20px;
   background: white;
 }
+.card {
+  margin-bottom: 24px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.note {
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+th {
+  background: #f0f0f0;
+}
