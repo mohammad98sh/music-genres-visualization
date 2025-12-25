@@ -16,31 +16,27 @@ header {
 main {
   max-width: 900px;
   margin: 40px auto;
-  padding: 20px;
-  background: white;
+  padding: 0 20px;
 }
+
 .card {
+  background: white;
   margin-bottom: 24px;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
-h2 {
-  margin-top: 0;
-}
-
 .note {
   font-size: 0.95rem;
   color: #555;
-  margin-top: 10px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  overflow: hidden;
   border-radius: 10px;
+  overflow: hidden;
 }
 
 th, td {
@@ -52,4 +48,18 @@ th, td {
 
 th {
   background: #f0f0f0;
+}
+
+a { color: inherit; }
+
+footer {
+  max-width: 900px;
+  margin: 0 auto 40px auto;
+  padding: 0 20px;
+}
+
+.footer-note {
+  color: #666;
+  font-size: 0.95rem;
+  text-align: center;
 }

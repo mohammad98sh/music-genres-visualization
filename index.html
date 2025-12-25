@@ -1,37 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>100 Years of Music Genres</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>USA Music × Political Polarization (1958–2024)</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-  <header>
-    <h1>100 Years of Music Genres</h1>
-    <p>Evolution of music genre popularity from the 1920s to today</p>
-  </header>
+<header>
+  <h1>USA Music × Political Polarization</h1>
+  <p>Decade-level comparison of Billboard Hot 100 dynamics and congressional polarization (1958–2024).</p>
+</header>
 
-  <main>
+<main>
   <section class="card">
-  <h2>Visualization</h2>
+    <h2>Visualization</h2>
+    <p class="note">
+      Music metrics are computed from Billboard Hot 100 weekly charts (1958–2024). Political polarization is computed
+      from Voteview DW-NOMINATE party means. The 1950s include only 1958–1959; the 2020s include 2020–mid 2024.
+      This visualization highlights correlations and temporal convergence rather than claiming direct causality.
+    </p>
 
-  <h3>Genre popularity (stacked trend)</h3>
-  <canvas id="genreChart"></canvas>
+    <h3>Music trend: average weeks on Hot 100</h3>
+    <canvas id="musicChart"></canvas>
 
-  <h3>Socio-political tension index</h3>
-  <canvas id="tensionChart"></canvas>
+    <h3>Politics trend: polarization index (0–100)</h3>
+    <canvas id="politicsChart"></canvas>
+  </section>
 
-  <p class="note">
-    Both charts are generated from CSV datasets stored in this repository.
-    The goal is to compare long-term musical trends with socio-political context signals.
-  </p>
-</section>
+  <section class="card">
+    <h2>Dataset preview</h2>
+    <div id="tableContainer">Loading data…</div>
+    <p class="note">
+      Download dataset:
+      <a href="data/merged_music_politics_by_decade.csv">merged_music_politics_by_decade.csv</a>
+    </p>
+  </section>
 
+  <section class="card">
+    <h2>Method (short)</h2>
+    <p>
+      This project compares decade-level music chart dynamics with a standardized measure of U.S. political polarization.
+      Music metrics are aggregated from weekly Hot 100 rankings, while polarization is derived from party mean ideology
+      scores (DW-NOMINATE). The visualization supports exploratory analysis and does not claim direct causality.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Important limitations</h2>
+    <p>
+      The Hot 100 starts in 1958, so the 1950s decade is partial (1958–1959). The 2020s decade is also partial (2020–mid 2024),
+      which may bias longevity metrics downward due to right-censoring.
+    </p>
+  </section>
 </main>
 
+<footer>
+  <p class="footer-note">Built for the course “Web Graphique et Design des Données” (Université Paris 8).</p>
+</footer>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
