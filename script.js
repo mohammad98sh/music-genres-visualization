@@ -11,7 +11,7 @@ function parseCSV(csvText) {
   const rows = lines.slice(1).map(line => {
     const values = line.split(",").map(v => v.trim());
     const obj = {};
-    headers.forEach((h, i) => obj[h] = values[i]);
+    headers.forEach((h, i) => (obj[h] = values[i]));
     return obj;
   });
 
@@ -20,7 +20,6 @@ function parseCSV(csvText) {
 
 function renderTable(headers, rows) {
   const container = document.getElementById("tableContainer");
-
   const table = document.createElement("table");
 
   const thead = document.createElement("thead");
@@ -58,13 +57,44 @@ async function main() {
   const csvText = await loadCSV(csvPath);
   const { headers, rows } = parseCSV(csvText);
 
-  // Preview table
-  renderTable(headers, rows);
+  // ---- Dataset preview: show fewer columns by default, allow toggle ----
+  const importantCols = [
+    "decade",
+    "avg_lifetime_weeks",
+    "pct_reached_top10",
+    "avg_best_peak",
+    "polarization_gap",
+    "polarization_index_0_100"
+  ];
 
-  // X axis
+  let showAll = false;
+
+  const toggleBtn = document.getElementById("toggleColumnsBtn");
+  if (toggleBtn) {
+    const render = () => {
+      const headersToShow = showAll
+        ? headers
+        : headers.filter(h => importantCols.includes(h));
+
+      renderTable(headersToShow, rows);
+      toggleBtn.textContent = showAll ? "Show fewer columns" : "Show all columns";
+    };
+
+    toggleBtn.addEventListener("click", () => {
+      showAll = !showAll;
+      render();
+    });
+
+    render();
+  } else {
+    // Fallback if button not present in HTML
+    renderTable(headers, rows);
+  }
+
+  // ---- Charts ----
   const labels = rows.map(r => decadeLabel(Number(r.decade)));
 
-  // Music series: avg_lifetime_weeks
+  // Music: avg_lifetime_weeks
   const musicValues = rows.map(r => Number(r.avg_lifetime_weeks));
 
   new Chart(document.getElementById("musicChart"), {
@@ -80,15 +110,21 @@ async function main() {
     },
     options: {
       responsive: true,
-      plugins: { legend: { position: "bottom" } },
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
       scales: {
-        y: { beginAtZero: true, title: { display: true, text: "Weeks" } },
-        x: { title: { display: true, text: "Decade" } }
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: "Weeks" }
+        },
+        x: {
+          title: { display: true, text: "Decade" }
+        }
       }
     }
   });
 
-  // Politics series: polarization_index_0_100
+  // Politics: polarization_index_0_100
   const polValues = rows.map(r => Number(r.polarization_index_0_100));
 
   new Chart(document.getElementById("politicsChart"), {
@@ -104,14 +140,17 @@ async function main() {
     },
     options: {
       responsive: true,
-      plugins: { legend: { position: "bottom" } },
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
       scales: {
         y: {
           beginAtZero: true,
           suggestedMax: 100,
-          title: { display: true, text: "Index" }
+          title: { display: true, text: "Index (0–100)" }
         },
-        x: { title: { display: true, text: "Decade" } }
+        x: {
+          title: { display: true, text: "Decade" }
+        }
       }
     }
   });
