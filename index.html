@@ -4,14 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>USA Music × Political Polarization (1958–2024)</title>
+
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<header>
-  <h1>USA Music × Political Polarization</h1>
-  <p>Decade-level comparison of Billboard Hot 100 dynamics and congressional polarization (1958–2024).</p>
+<header class="hero">
+  <div class="hero-inner">
+
+    <div class="topbar">
+      <button id="themeToggle" class="btn" type="button" aria-label="Toggle theme">
+        Dark mode
+      </button>
+    </div>
+
+    <h1>USA Music × Political Polarization</h1>
+    <p class="subtitle">
+      Decade-level comparison of Billboard Hot 100 dynamics and congressional polarization (1958–2024).
+    </p>
+
+  </div>
 </header>
 
 <main>
@@ -23,36 +36,45 @@
       This visualization highlights correlations and temporal convergence rather than claiming direct causality.
     </p>
 
+    <!-- KPI row (filled by JS) -->
+    <div id="kpiRow" class="kpi-row"></div>
+
     <h3>Music trend: average weeks on Hot 100</h3>
-    <canvas id="musicChart"></canvas>
+    <div class="chart-box">
+      <canvas id="musicChart"></canvas>
+    </div>
 
     <h3>Politics trend: polarization index (0–100)</h3>
-    <canvas id="politicsChart"></canvas>
+    <div class="chart-box">
+      <canvas id="politicsChart"></canvas>
+    </div>
   </section>
 
   <section class="card">
-  <h2>Dataset preview</h2>
+    <div class="card-head">
+      <h2>Dataset preview</h2>
 
-  <div class="table-actions">
-    <button id="toggleColumnsBtn" type="button">Show all columns</button>
-  </div>
+      <div class="table-actions">
+        <button id="toggleColumnsBtn" type="button">Show all columns</button>
+      </div>
+    </div>
 
-  <div class="table-scroll">
-    <div id="tableContainer">Loading data…</div>
-  </div>
+    <div class="table-scroll">
+      <div id="tableContainer">Loading data…</div>
+    </div>
 
-  <p class="note">
-    Download dataset:
-    <a href="data/merged_music_politics_by_decade.csv">merged_music_politics_by_decade.csv</a>
-  </p>
-</section>
+    <p class="note">
+      Download dataset:
+      <a href="data/merged_music_politics_by_decade.csv">merged_music_politics_by_decade.csv</a>
+    </p>
+  </section>
 
   <section class="card">
     <h2>Method (short)</h2>
     <p>
       This project compares decade-level music chart dynamics with a standardized measure of U.S. political polarization.
       Music metrics are aggregated from weekly Hot 100 rankings, while polarization is derived from party mean ideology
-      scores (DW-NOMINATE). The visualization supports exploratory analysis and does not claim direct causality.
+      scores (DW-NOMINATE). The visualization supports exploratory analysis and does not infer causality.
     </p>
   </section>
 
@@ -60,7 +82,18 @@
     <h2>Important limitations</h2>
     <p>
       The Hot 100 starts in 1958, so the 1950s decade is partial (1958–1959). The 2020s decade is also partial (2020–mid 2024),
-      which may bias longevity metrics downward due to right-censoring.
+      which may bias longevity metrics downward due to right-censoring (some songs have not completed their chart life yet).
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Course alignment (Séances 01–03)</h2>
+    <p class="note">
+      <strong>Séance 01 — Web + données:</strong> publication on GitHub Pages and open CSV datasets for reproducibility.
+      <br/>
+      <strong>Séance 02 — Code + bibliothèques:</strong> charts built with Chart.js and data loaded dynamically from CSV.
+      <br/>
+      <strong>Séance 03 — Design web:</strong> responsive layout + theme toggle and concise data summaries (KPIs).
     </p>
   </section>
 </main>
