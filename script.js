@@ -52,12 +52,73 @@ function decadeLabel(d) {
   return `${d}s`;
 }
 
+/* -------- Theme toggle -------- */
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("theme", theme);
+
+  const btn = document.getElementById("themeToggle");
+  if (btn) btn.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+}
+
+function initThemeToggle() {
+  const saved = localStorage.getItem("theme");
+  const initial = saved || "light";
+  applyTheme(initial);
+
+  const btn = document.getElementById("themeToggle");
+  if (!btn) return;
+
+  btn.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme") || "light";
+    applyTheme(current === "dark" ? "light" : "dark");
+  });
+}
+
+/* -------- KPIs -------- */
+function renderKPIs(rows) {
+  const el = document.getElementById("kpiRow");
+  if (!el) return;
+
+  const maxPol = rows.reduce((a, b) =>
+    Number(b.polarization_index_0_100) > Number(a.polarization_index_0_100) ? b : a
+  );
+
+  const maxLongevity = rows.reduce((a, b) =>
+    Number(b.avg_lifetime_weeks) > Number(a.avg_lifetime_weeks) ? b : a
+  );
+
+  const maxTop10 = rows.reduce((a, b) =>
+    Number(b.pct_reached_top10) > Number(a.pct_reached_top10) ? b : a
+  );
+
+  el.innerHTML = `
+    <div class="kpi">
+      <div class="label">Peak polarization decade</div>
+      <div class="value">${maxPol.decade}s (${Number(maxPol.polarization_index_0_100).toFixed(1)})</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Highest chart longevity</div>
+      <div class="value">${maxLongevity.decade}s (${Number(maxLongevity.avg_lifetime_weeks).toFixed(2)} weeks)</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Highest Top 10 reach</div>
+      <div class="value">${maxTop10.decade}s (${Number(maxTop10.pct_reached_top10).toFixed(2)}%)</div>
+    </div>
+  `;
+}
+
 async function main() {
+  initThemeToggle();
+
   const csvPath = "data/merged_music_politics_by_decade.csv";
   const csvText = await loadCSV(csvPath);
   const { headers, rows } = parseCSV(csvText);
 
-  // ---- Dataset preview: show fewer columns by default, allow toggle ----
+  // KPI row
+  renderKPIs(rows);
+
+  // ---- Dataset preview: fewer columns by default + toggle ----
   const importantCols = [
     "decade",
     "avg_lifetime_weeks",
@@ -68,28 +129,28 @@ async function main() {
   ];
 
   let showAll = false;
-
   const toggleBtn = document.getElementById("toggleColumnsBtn");
-  if (toggleBtn) {
-    const render = () => {
-      const headersToShow = showAll
-        ? headers
-        : headers.filter(h => importantCols.includes(h));
 
-      renderTable(headersToShow, rows);
+  const renderPreview = () => {
+    const headersToShow = showAll
+      ? headers
+      : headers.filter(h => importantCols.includes(h));
+
+    renderTable(headersToShow, rows);
+
+    if (toggleBtn) {
       toggleBtn.textContent = showAll ? "Show fewer columns" : "Show all columns";
-    };
+    }
+  };
 
+  if (toggleBtn) {
     toggleBtn.addEventListener("click", () => {
       showAll = !showAll;
-      render();
+      renderPreview();
     });
-
-    render();
-  } else {
-    // Fallback if button not present in HTML
-    renderTable(headers, rows);
   }
+
+  renderPreview();
 
   // ---- Charts ----
   const labels = rows.map(r => decadeLabel(Number(r.decade)));
